@@ -1,43 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rsao-pay <rsao-pay@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 11:40:20 by rsao-pay          #+#    #+#             */
-/*   Updated: 2025/11/20 15:19:58 by rsao-pay         ###   ########.fr       */
+/*   Updated: 2025/11/20 15:20:04 by rsao-pay         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*get_next_line(int fd)
 {
-	static char	buffer[BUFFER_SIZE + 1];
+	static char	buffer[MAX_FDS][BUFFER_SIZE + 1];
 	char		*line;
 	int			bytes_read;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd > MAX_FDS || BUFFER_SIZE <= 0)
 		return (NULL);
 	line = NULL;
 	while (1)
 	{
-		if (buffer[0])
-			line = ft_strjoin(line, buffer);
-		if (ft_strchr(buffer, '\n'))
+		if (buffer[fd][0])
+			line = ft_strjoin(line, buffer[fd]);
+		if (ft_strchr(buffer[fd], '\n'))
 			break ;
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		bytes_read = read(fd, buffer[fd], BUFFER_SIZE);
 		if (bytes_read < 0)
-			return (buffer[0] = '\0', free(line), NULL);
-		buffer[bytes_read] = '\0';
+			return (buffer[fd][0] = '\0', free(line), NULL);
+		buffer[fd][bytes_read] = '\0';
 		if (bytes_read == 0)
 			break ;
 	}
 	if (!line || !line[0])
 		return (free(line), NULL);
-	ft_memcpy(buffer, buffer + ft_strlen_find(buffer, '\n'),
-		(ssize_t)ft_strlen_find(buffer + ft_strlen_find(buffer, '\n'), '\0'));
+	ft_memcpy(buffer[fd], buffer[fd] + ft_strlen_find(buffer[fd], '\n'),
+		ft_strlen_find(buffer[fd] + ft_strlen_find(buffer[fd], '\n'), '\0'));
 	return (line);
 }
 
@@ -45,14 +45,20 @@ char	*get_next_line(int fd)
 // #include <stdio.h>
 //
 // int main(void){
-// 	int fd = open("get_next_line.c", O_RDONLY);
-// 	char *line;
-//
-// 	int lines_to_read = 60;
-// 	while ((line = get_next_line(fd)) && lines_to_read--)
+// 	int fd1 = open("get_next_line.c", O_RDONLY);
+// 	int fd2 = open("get_next_line_bonus.c", O_RDONLY);
+// 	int lines_to_read = 100;
+// 	char *s;
+// 	while (lines_to_read--)
 // 	{
-// 		printf("%s", line);
-// 		free(line);
+// 		s = get_next_line(fd1);
+// 		printf("%s", s);
+// 		free(s);
+// 		s = get_next_line(fd2);
+// 		printf("%s", s);
+// 		free(s);
 // 	}
-// 	free(line);
+// 	free(s);
+// 	close(fd1);
+// 	close(fd2);
 // }

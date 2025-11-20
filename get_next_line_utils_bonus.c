@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rsao-pay <rsao-pay@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 11:40:02 by rsao-pay          #+#    #+#             */
-/*   Updated: 2025/11/19 13:29:10 by rsao-pay         ###   ########.fr       */
+/*   Updated: 2025/11/20 13:48:12 by rsao-pay         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	ft_strlen_find(const char *str, char c)
 {
@@ -20,6 +20,8 @@ size_t	ft_strlen_find(const char *str, char c)
 	if (!str)
 		return (0);
 	while (str[i] && str[i] != c)
+		i++;
+	if (str[i] == c)
 		i++;
 	return (i);
 }
@@ -43,32 +45,16 @@ void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
 	unsigned char	*destp;
 	unsigned char	*srcp;
+	ssize_t			i;
 
+	i = (ssize_t)n;
 	if (!dst && !src)
 		return (NULL);
 	destp = (unsigned char *)dst;
 	srcp = (unsigned char *)src;
-	while (n--)
+	while (i--)
 		*destp++ = *srcp++;
 	return (dst);
-}
-
-char	*cpy_buffer(const char *buffer, size_t len)
-{
-	char	*cpy;
-	size_t	i;
-
-	cpy = malloc(len + 1);
-	if (!cpy)
-		return (NULL);
-	i = 0;
-	while (buffer[i] && i < len)
-	{
-		cpy[i] = buffer[i];
-		i++;
-	}
-	cpy[i] = '\0';
-	return (cpy);
 }
 
 char	*ft_strjoin(char *previous, const char *current)
@@ -80,9 +66,9 @@ char	*ft_strjoin(char *previous, const char *current)
 	len_prev = 0;
 	len_curr = 0;
 	if (previous)
-		len_prev = ft_strlen_find(previous, '\0');
+		len_prev = ft_strlen_find(previous, '\n');
 	if (current)
-		len_curr = ft_strlen_find(current, '\0');
+		len_curr = ft_strlen_find(current, '\n');
 	merge = (char *)malloc(len_prev + len_curr + 1);
 	if (!merge)
 		return (NULL);
